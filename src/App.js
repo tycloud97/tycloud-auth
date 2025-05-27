@@ -18,12 +18,11 @@ const userPool = new CognitoUserPool(poolData);
 function attributesArrayToObject(attributes) {
   if (!Array.isArray(attributes)) return attributes;
   const obj = {};
-  attributes.forEach(attr => {
+  attributes.forEach((attr) => {
     obj[attr.Name] = attr.Value;
   });
   return obj;
 }
-
 
 function App() {
   const [email, setEmail] = useState("");
@@ -34,7 +33,6 @@ function App() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState("");
   const [uploadSuccess, setUploadSuccess] = useState("");
-
 
   // File upload
   const handleFileChange = (e) => {
@@ -69,7 +67,7 @@ function App() {
     });
   };
 
-    // List S3 files
+  // List S3 files
   function listS3Buckets() {
     const s3 = new AWS.S3();
     const bucketName = "tycloud";
@@ -80,7 +78,7 @@ function App() {
     });
   }
 
-   // Download file
+  // Download file
   const handleDownload = (fileKey) => {
     const s3 = new AWS.S3();
     const params = { Bucket: "tycloud", Key: fileKey };
@@ -100,20 +98,21 @@ function App() {
 
   const getUserDetails = async (accessToken) => {
     try {
-      const userInfoEndpoint = "https://ty.auth.ap-southeast-1.amazoncognito.com/oauth2/userInfo";
-  
+      const userInfoEndpoint =
+        "https://ty.auth.ap-southeast-1.amazoncognito.com/oauth2/userInfo";
+
       const response = await fetch(userInfoEndpoint, {
         method: "GET",
         headers: { Authorization: `Bearer ${accessToken}` },
       });
-  
+
       const userDetails = await response.json();
-  
+
       if (!response.ok) {
         console.error("Failed to retrieve user details:", userDetails);
         return null; // Return null or a clear indication that the retrieval failed.
       }
-  
+
       console.log("User details retrieved successfully:", userDetails);
       return userDetails; // Assuming you want the function to return userDetails
     } catch (error) {
@@ -161,8 +160,8 @@ function App() {
             })
           );
           console.log("Token exchange successful");
-          getAWSCredentials(data.id_token); 
-          listS3Buckets()
+          getAWSCredentials(data.id_token);
+          listS3Buckets();
         } else {
           console.error("Token exchange failed:", data);
         }
@@ -245,7 +244,7 @@ function App() {
         });
 
         getAWSCredentials(session.getIdToken().getJwtToken());
-        listS3Buckets()
+        listS3Buckets();
       },
       onFailure: (err) => {
         alert(err.message || JSON.stringify(err));
@@ -279,7 +278,7 @@ function App() {
     });
   }
 
-   // UI
+  // UI
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-200 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
@@ -291,13 +290,8 @@ function App() {
                   ? user.email[0].toUpperCase()
                   : user[2]?.Value?.[0]?.toUpperCase() || "U"}
               </div>
-              <h1 className="text-2xl font-bold text-gray-800 mb-1">
-                Welcome
-              </h1>
-              <p className="text-gray-500 text-sm mb-2">
-                
-                {user.email}
-              </p>
+              <h1 className="text-2xl font-bold text-gray-800 mb-1">Welcome</h1>
+              <p className="text-gray-500 text-sm mb-2">{user.email}</p>
             </div>
 
             {/* S3 Files */}
